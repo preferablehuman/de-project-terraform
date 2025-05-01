@@ -46,13 +46,13 @@ variable "bucket_textstore" {
 variable "container_videoprocessing" {
   description = "Container image URL for first Cloud Run service"
   type        = string
-  default = "video-processing"
+  default = "preferablehuman/lamprey-locator:latest"
 }
 
 variable "container_csvprocessing" {
   description = "Container image URL for second Cloud Run service"
   type        = string
-  default = "csv-processing"
+  default = "preferablehuman/csv-processor:latest"
 }
 
 variable "db_instance_name" {
@@ -241,6 +241,10 @@ resource "google_cloud_run_v2_service" "video-processing" {
         name = "DB_PASS"  
         value = var.db_password 
       }
+      env { 
+        name = "BUCKET_NAME"  
+        value = var.bucket_videostore
+      }
     }
   }
   depends_on = [google_project_service.services]
@@ -272,6 +276,10 @@ resource "google_cloud_run_v2_service" "csv-processing" {
       env { 
         name = "DB_PASS"  
         value = var.db_password 
+      }
+      env { 
+        name = "BUCKET_NAME"  
+        value = var.bucket_textstore
       }
     }
   }
